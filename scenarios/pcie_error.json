@@ -1,0 +1,26 @@
+{
+  "incident_id": "GPU-NODE-07",
+  "severity": "HIGH",
+  "symptoms": {
+    "PCIe correctable errors": "↑ 847%",
+    "Link retrains": "12",
+    "GPU utilization": "91%",
+    "GPU temperature": "67°C",
+    "Application latency": "+34%"
+  },
+  "correlation": [
+    {"check": "PCIe error burst", "status": true},
+    {"check": "Link instability", "status": true},
+    {"check": "Application degradation", "status": true},
+    {"check": "Thermal anomaly", "status": false},
+    {"check": "Compute saturation", "status": false}
+  ],
+  "root_cause": "PCIe link instability",
+  "confidence": "91%",
+  "remediation": [
+    "Inspect PCIe AER counters",
+    "Verify PCIe topology",
+    "Check riser/backplane connectivity",
+    "Compare neighboring nodes"
+  ]
+}
