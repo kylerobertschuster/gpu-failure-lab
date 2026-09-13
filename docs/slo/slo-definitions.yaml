@@ -1,0 +1,51 @@
+# Vendor-neutral SLO definitions for GPU compute infrastructure.
+# Each SLI maps directly to a signal the diagnostic engine consumes.
+# No Prometheus/Grafana dependency: these are the *contracts* a telemetry
+# pipeline would implement.
+
+service:
+  name: GPU Compute Platform
+  tier: Tier-1
+  users:
+    - ML Engineering
+    - Data Science
+
+slis:
+  # Availability: are GPUs healthy and schedulable?
+  gpu_availability:
+    description: Fraction of GPU nodes reporting healthy link + no fatal errors
+    source: node health telemetry
+    target: 99.9%
+
+  # Reliability: physical-layer health of the interconnect
+  pcie_error_rate:
+    description: Correctable PCIe errors per interval (burst = bad)
+    source: PCIe AER counters
+    alert_on:
+      - correctable_error_burst
+      - link_retrains > 0
+
+  # Performance: is the workload actually progressing?
+  application_latency:
+    description: End-to-end latency degradation vs baseline
+    source: application telemetry
+    target: within 10% of baseline
+
+slos:
+  - name: gpu-node-health
+    sli: gpu_availability
+    target: 99.9%
+    window: 30d
+
+error_budget:
+  monthly_allowed_downtime_minutes: 43.2   # 0.1% of 30 days
+  burn_rate_alerts:
+    fast_burn:
+      threshold: 2% consumed in 1h
+      severity: page
+    slow_burn:
+      threshold: 5% consumed in 6h
+      severity: ticket
+  policy:
+    consume_gt_50pct: freeze non-critical deployments
+    consume_gt_90pct: freeze all changes + postmortem required
