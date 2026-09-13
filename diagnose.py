@@ -7,12 +7,12 @@ Usage:
 Turns a telemetry fixture (JSON) into a reproducible incident report:
 observe → correlate → isolate → diagnose → communicate.
 """
+
 from __future__ import annotations
 
 import json
 import sys
 from pathlib import Path
-
 
 HEADER = """╔══════════════════════════════════════════════╗
 ║ GPU INFRASTRUCTURE INCIDENT ANALYZER         ║
@@ -54,7 +54,7 @@ def main() -> int:
         print(f"Error: File '{file_path}' not found.")
         return 1
 
-    with open(file_path, "r", encoding="utf-8") as f:
+    with open(file_path, encoding="utf-8") as f:
         data = json.load(f)
 
     print_report(data)
